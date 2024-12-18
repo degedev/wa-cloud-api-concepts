@@ -37,12 +37,13 @@ app.get('/webhook', (req: Request, res: Response) => {
   if (mode === "subscribe" && token === 'secret') {
     res.status(200).send(challenge);
   } else {
-    res.sendStatus(403);
+    res.status(403);
   }
 })
 
 app.post('/webhook', (req: Request, res: Response) => {
-  res.sendStatus(200).json(req.body);
+  console.log(req.body)
+  res.status(200);
 })
 
 app.listen(3333, () => console.log("Server is running!"));
