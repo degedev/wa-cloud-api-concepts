@@ -42,7 +42,7 @@ app.get('/webhook', (req: Request, res: Response) => {
 })
 
 app.post('/webhook', (req: Request, res: Response) => {
-  console.log(req.body)
+  console.log(JSON.stringify(req.body));
   res.status(200);
 })
 
