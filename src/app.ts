@@ -43,7 +43,7 @@ app.get('/webhook', (req: Request, res: Response) => {
 
 app.post('/webhook', (req: Request, res: Response) => {
   console.log(JSON.stringify(req.body));
-  res.status(200);
+  res.status(200).send();
 })
 
 app.listen(3333, () => console.log("Server is running!"));
