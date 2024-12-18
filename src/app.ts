@@ -29,4 +29,20 @@ app.get('/users', async (req: Request, res: Response) => {
   }
 });
 
+app.get('/webhook', (req: Request, res: Response) => {
+  const mode = req.query["hub.mode"];
+  const challenge = req.query["hub.challenge"];
+  const token = req.query["hub.verify_token"];
+
+  if (mode === "subscribe" && token === 'secret') {
+    res.status(200).send(challenge);
+  } else {
+    res.sendStatus(403);
+  }
+})
+
+app.post('/webhook', (req: Request, res: Response) => {
+  res.sendStatus(200).json(req.body);
+})
+
 app.listen(3333, () => console.log("Server is running!"));
