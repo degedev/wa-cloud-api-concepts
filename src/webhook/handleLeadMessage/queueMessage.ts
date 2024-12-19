@@ -7,6 +7,7 @@ interface QueueItem {
   phoneNumberId: string
   to: string
   isQueued: boolean
+  messageId: string
 }
 
 interface ChatQueue {
@@ -19,6 +20,7 @@ interface EnqueueInput {
   phoneNumberId: string
   to: string
   message: string
+  messageId: string
 }
 
 export class QueueManager {
@@ -35,7 +37,7 @@ export class QueueManager {
   }
 
   public enqueue(
-    { queueId, message, phoneNumberId, to }: EnqueueInput,
+    { queueId, message, phoneNumberId, to, messageId }: EnqueueInput,
   ) {
     console.log("----------------------------")
     console.log("Enfileirando mensagem")
@@ -53,7 +55,8 @@ export class QueueManager {
       message,
       isQueued,
       phoneNumberId,
-      to
+      to,
+      messageId
     }
     chatQueue.queue.push(taskItem)
     this.chatQueues.set(queueId, chatQueue)
@@ -71,9 +74,12 @@ export class QueueManager {
     this.chatQueues.set(queueId, chatQueue)
     try {
       while (chatQueue.queue.length > 0) {
-        const { message, isQueued, phoneNumberId, to } = chatQueue.queue[0]
-          await this.sendMessagesToLead(phoneNumberId, to)
-          chatQueue.queue.shift()
+        const { message, isQueued, phoneNumberId, to, messageId } = chatQueue.queue[0]
+        const messageToReplyOrNull = isQueued
+        ? messageId
+        : null
+        await this.sendMessagesToLead(phoneNumberId, to, messageToReplyOrNull)
+        chatQueue.queue.shift()
         }
       } catch (err) {
       console.log(`Não foi possível processar a fila: ${err}`)
@@ -82,7 +88,7 @@ export class QueueManager {
     this.chatQueues.set(queueId, chatQueue)
   }
 
-  private async sendMessagesToLead(phoneNumberId: string, to: string) {
+  private async sendMessagesToLead(phoneNumberId: string, to: string, messageToReplyOrNull?: string) {
     console.log("----------------------------")
     console.log("Enviando mensagem para o lead")
     const response = await axios({
@@ -95,6 +101,9 @@ export class QueueManager {
       data: JSON.stringify({
           messaging_product: 'whatsapp',
           to,
+          context: {
+            message_id: messageToReplyOrNull
+          },
           type: 'text',
           text:{
               body: `ola de volta ${to}`

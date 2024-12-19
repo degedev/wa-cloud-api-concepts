@@ -5,6 +5,7 @@ interface HandleLeadMessageInput {
   message: string
   phoneNumberId: string
   from: string
+  messageId: string
 }
 const messageBuffer = new MessageBuffer()
 const queueMessage = new QueueManager()
@@ -16,6 +17,7 @@ export const handleLeadMessage = async (input: HandleLeadMessageInput) => {
   const composedMessage = await messageBuffer.bufferMessage(
     { bufferMessageId: id, message: input.message },
     (composedMessage: string) => {
+      console.log(`Mensagem composta para ${id}: ${composedMessage}`)
       return composedMessage
     }
   );
@@ -23,7 +25,8 @@ export const handleLeadMessage = async (input: HandleLeadMessageInput) => {
     queueId: id,
     message: composedMessage,
     phoneNumberId: input.phoneNumberId,
-    to: input.from
+    to: input.from,
+    messageId: input.messageId
   });
   return
 }

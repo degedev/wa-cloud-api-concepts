@@ -53,10 +53,12 @@ export class Webhook {
                           const text = message.text.body;
                           console.log(`Mensagem recebida de ${from}: ${text}`);
                           const phoneNumberId = value.metadata.phone_number_id
+                          const messageId = message.id
                           await handleLeadMessage({
                             message: text,
                             phoneNumberId,
                             from,
+                            messageId
                           });
                       }
                   });
