@@ -1,6 +1,10 @@
 import { Request, Response } from "express";
 
 export class Webhook {
+  constructor() {
+    this.handle = this.handle.bind(this);
+  }
+  
   async challenge(req: Request, res: Response) {
     try {
       const mode = req.query["hub.mode"];
