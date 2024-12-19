@@ -22,13 +22,36 @@ export class Webhook {
 
   async handle(req: Request, res: Response) {
     try {
-      console.log(JSON.stringify(req.body));
+      const body = req.body;
+      console.log(JSON.stringify(body));
+      this.assertLeadMessage(body);
       res.status(200).send();
       return
     } catch (error) {
       console.error("Error:", error);
       res.status(500).json({ error: "Internal server error" });
       return 
+    }
+  }
+
+  private assertLeadMessage(body: any) {
+    if (body.object === 'whatsapp_business_account') {
+      body.entry.forEach((entry: any) => {
+          const changes = entry.changes || [];
+          changes.forEach((change: any) => {
+              const value = change.value;
+              if (value && value.messages) {
+                  const messages = value.messages;
+                  messages.forEach((message: any) => {
+                      if (message.type === 'text') {
+                          const from = message.from;
+                          const text = message.text.body;
+                          console.log(`Mensagem recebida de ${from}: ${text}`);
+                      }
+                  });
+              }
+          });
+      });
     }
   }
 }
