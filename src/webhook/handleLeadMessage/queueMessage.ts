@@ -91,25 +91,25 @@ export class QueueManager {
   private async sendMessagesToLead(phoneNumberId: string, to: string, messageToReplyOrNull?: string) {
     console.log("----------------------------")
     console.log("Enviando mensagem para o lead")
+    const data: any = {
+      messaging_product: 'whatsapp',
+      to,
+      type: 'text',
+      text: {
+        body: `ola de volta ${to}`
+      }
+    };
+    if (messageToReplyOrNull) data.context = { message_id: messageToReplyOrNull };
+
     const response = await axios({
       url: `https://graph.facebook.com/v20.0/${phoneNumberId}/messages`,
       method: 'post',
       headers: {
-          'Authorization': `Bearer ${WHATSAPP_TOKEN}`,
-          'Content-Type': 'application/json'
+        'Authorization': `Bearer ${WHATSAPP_TOKEN}`,
+        'Content-Type': 'application/json'
       },
-      data: JSON.stringify({
-          messaging_product: 'whatsapp',
-          to,
-          context: {
-            message_id: messageToReplyOrNull
-          },
-          type: 'text',
-          text:{
-              body: `ola de volta ${to}`
-          }
-      })
-    })
-    console.log(response.data) 
+      data: JSON.stringify(data)
+    });
+    console.log(response.data);
   }
 }
