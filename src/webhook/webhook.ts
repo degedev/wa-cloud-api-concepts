@@ -24,7 +24,7 @@ export class Webhook {
     try {
       const body = req.body;
       console.log(JSON.stringify(body));
-      this.assertLeadMessage(body);
+      await this.assertLeadMessage(body);
       res.status(200).send();
       return
     } catch (error) {
@@ -34,7 +34,7 @@ export class Webhook {
     }
   }
 
-  private assertLeadMessage(body: any) {
+  private async assertLeadMessage(body: any) {
     if (body.object === 'whatsapp_business_account') {
       body.entry.forEach((entry: any) => {
           const changes = entry.changes || [];
