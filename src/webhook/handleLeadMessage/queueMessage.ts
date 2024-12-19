@@ -37,6 +37,8 @@ export class QueueManager {
   public enqueue(
     { queueId, message, phoneNumberId, to }: EnqueueInput,
   ) {
+    console.log("----------------------------")
+    console.log("Enfileirando mensagem")
     let chatQueue = this.chatQueues.get(queueId)
     if (!chatQueue) {
       chatQueue = {
@@ -61,6 +63,8 @@ export class QueueManager {
   }
 
   private async processQueue(queueId: string) {
+    console.log("----------------------------")
+    console.log("Processando fila")
     const chatQueue = this.chatQueues.get(queueId)
     if (!chatQueue) return
     chatQueue.isProcessing = true
@@ -69,8 +73,8 @@ export class QueueManager {
       while (chatQueue.queue.length > 0) {
         const { message, isQueued, phoneNumberId, to } = chatQueue.queue[0]
           await this.sendMessagesToLead(phoneNumberId, to)
+          chatQueue.queue.shift()
         }
-        chatQueue.queue.shift()
       } catch (err) {
       console.log(`Não foi possível processar a fila: ${err}`)
     }
@@ -79,6 +83,8 @@ export class QueueManager {
   }
 
   private async sendMessagesToLead(phoneNumberId: string, to: string) {
+    console.log("----------------------------")
+    console.log("Enviando mensagem para o lead")
     const response = await axios({
       url: `https://graph.facebook.com/v20.0/${phoneNumberId}/messages`,
       method: 'post',

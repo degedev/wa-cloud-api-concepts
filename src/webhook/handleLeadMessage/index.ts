@@ -10,6 +10,8 @@ const messageBuffer = new MessageBuffer()
 const queueMessage = new QueueManager()
 
 export const handleLeadMessage = async (input: HandleLeadMessageInput) => {
+  console.log("----------------------------")
+  console.log("Enviando mensagem para o lead")
   const id = `${input.phoneNumberId}:${input.from}`;
   const composedMessage = await messageBuffer.bufferMessage(
     { bufferMessageId: id, message: input.message },
