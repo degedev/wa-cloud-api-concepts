@@ -1,10 +1,11 @@
 import { Request, Response } from "express";
+import { handleLeadMessage } from "./handleLeadMessage";
 
 export class Webhook {
   constructor() {
     this.handle = this.handle.bind(this);
   }
-  
+
   async challenge(req: Request, res: Response) {
     try {
       const mode = req.query["hub.mode"];
@@ -40,17 +41,23 @@ export class Webhook {
 
   private async assertLeadMessage(body: any) {
     if (body.object === 'whatsapp_business_account') {
-      body.entry.forEach((entry: any) => {
+      body.entry.forEach(async (entry: any) => {
           const changes = entry.changes || [];
-          changes.forEach((change: any) => {
+          changes.forEach(async (change: any) => {
               const value = change.value;
               if (value && value.messages) {
                   const messages = value.messages;
-                  messages.forEach((message: any) => {
+                  messages.forEach(async (message: any) => {
                       if (message.type === 'text') {
                           const from = message.from;
                           const text = message.text.body;
                           console.log(`Mensagem recebida de ${from}: ${text}`);
+                          const phoneNumberId = value.metadata.phone_number_id
+                          await handleLeadMessage({
+                            message: text,
+                            phoneNumberId,
+                            from,
+                          });
                       }
                   });
               }
