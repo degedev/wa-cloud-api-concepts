@@ -50,7 +50,7 @@ export class QueueManager {
       this.chatQueues.set(queueId, chatQueue)
     }
 
-    const isQueued = chatQueue.isProcessing
+    const isQueued = true
     const taskItem: QueueItem = {
       message,
       isQueued,
